@@ -10,7 +10,7 @@ This step includes two parts, one is the "_(1) SIF simulation at the leaf scale_
 The main source code is _SIF_daytime_Baima_distribution.m_.
 
 
-## Step3 Directional SIF simulation
+## Step3. Directional SIF simulation
 The main source code is _SIF_daytime_canopy_biDirectional_cylinder.m_.
 
 
