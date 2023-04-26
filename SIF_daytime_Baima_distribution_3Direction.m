@@ -2,9 +2,9 @@ clear all;clc;
 root = '\\Jinlab309\d\JinShichao\3DSIF\Malixia_14Layer30Points\MLX1107_3angles'
 filepath=strcat(root,'\PAR\')
 filepath_PAR = strcat(root,'\PAR\*.txt');
-filepath_SIF=strcat(root,'\PAR2SIF\'); %  SIF data directory; Êä³öµãÔÆ±£´æÂ·¾¶
+filepath_SIF=strcat(root,'\PAR2SIF\'); %  SIF data directory; è¾“å‡ºç‚¹äº‘ä¿å­˜è·¯å¾„
 
-Files=dir([filepath_PAR]); %PAR directory, ·øÉäÊäÈëµãÔÆ
+Files=dir([filepath_PAR]); %PAR directory, è¾å°„è¾“å…¥ç‚¹äº‘
 
 RT_ms=load('RT_ms3.txt');  % the RT_ms3.txt file was derived by 4-scale model
 RZT_ms=load('RZT_ms2.txt');  % the RT_ms2.txt file was derived by 4-scale model
@@ -12,7 +12,7 @@ daytime = 301;
 number=length(Files); 
 %sifnadir=zeros(number,1);  % SIF simulation at nadir direction
 
-%»ñÈ¡V
+%è·å–V
 X                           = textread('../inputdata.txt','%s');
 N                           = str2double(X);
 V                           = assignvarnames; % 
@@ -20,7 +20,7 @@ options.Cca_function_of_Cab = 0;
 
 for i = 1:length(V)  % assign values to variables using string matching
     j = find(strcmp(strtok(X(:,1)),V(i).Name));
-    if isempty(j) || isnan(N(j+1))                       % N is not None and J is not empty;  NµÄÖµ¼È²»ÊÇnan,JµÄÖµÒ²²»Îª¿Õ
+    if isempty(j) || isnan(N(j+1))                       % N is not None and J is not empty;  Nçš„å€¼æ—¢ä¸æ˜¯nan,Jçš„å€¼ä¹Ÿä¸ä¸ºç©º
         if i==2
             fprintf(1,'%s %s %s \n','warning: input "', V(i).Name, '" not provided in input spreadsheet...');
             fprintf(1,'%s %s %s\n', 'I will use 0.25*Cab instead');
@@ -71,7 +71,7 @@ for i = 1:length(V)  % assign values to variables using string matching
 end
 %leaf biochemistry
 vi = ones(length(V),1);
-leafbio.Cab = 40;   % Chlorophyll content; Ò¶ÂÌËØÅ¨¶È
+leafbio.Cab = 40;   % Chlorophyll content; å¶ç»¿ç´ æµ“åº¦
 leafbio.Cca = V(2).Val(vi(2));
 leafbio.Cdm  = V(3).Val(vi(3));
 leafbio.Cw = V(4).Val(vi(4));
@@ -94,8 +94,7 @@ leafbio.kNPQs   = V(57).Val(vi(57));
 leafbio.qLs  = V(58).Val(vi(58));
 leafbio.stressfactor  = V(59).Val(vi(59));
 %optipar
-path_input      = '../../data/input/';          % path of all inputs
-opticoef    = load([path_input,'fluspect_parameters/Optipar_fluspect_2014.txt']);  % file with leaf spectral parameters
+opticoef    = load('Optipar_fluspect_2014.txt');  % file with leaf spectral parameters
 % Optical coefficient data used by fluspect
 optipar.nr    = opticoef(:,2);
 optipar.Kab   = opticoef(:,3);
@@ -107,7 +106,7 @@ optipar.phiI  = opticoef(:,9);
 optipar.phiII = opticoef(:,10);
 
 
-%¼ÆËãÎüÊÕÂÊ
+%è®¡ç®—å¸æ”¶ç‡
 [spectral] = define_bands;
 %wlS  = spectral.wlS;    % SCOPE 1.40 definition
 %wlP  = spectral.wlP;    % PROSPECT (fluspect) range
@@ -165,7 +164,7 @@ Eskyt           = Esky_M(J_o)'*resolution(J_o);                     %Calculate o
 Etot= Esunt+Eskyt; %Shichao Added
 fEsun(J_o)      = Esun_M(J_o)/Etot;                                 %fraction of contribution of Sun fluxes to total light
 fEsky(J_o)      = Esky_M(J_o)/Etot;                                 %fraction of contribution of Sky fluxes to total light
-%Ó«¹â²¨¶Î
+%è§å…‰æ³¢æ®µ
 wlS          = spectral.wlS';       % SCOPE wavelengths, make column vectors
 wlF          = spectral.wlF';       % Fluorescence wavelengths
 wlE          = spectral.wlE';       % Excitation wavelengths
@@ -182,21 +181,21 @@ MminII                = 0.5*(MbII-MfII);
 
 for time=1:number
 
-%filename_path=strcat(filepath_SIF,num2str(daytime));  %±£´æSIFtxtµÄÂ·¾¶ºÍÃüÃû
+%filename_path=strcat(filepath_SIF,num2str(daytime));  %ä¿å­˜SIFtxtçš„è·¯å¾„å’Œå‘½å
  
 filename=Files(time).name;
 filename_path=strcat(filepath_SIF,'SIF_',filename(5:length(filename)-4));
-LiDARdata=load(strcat(filepath,filename));  %µ¼Èë¸ÃÊ±¿Ì·øÉäÊı¾İ, speed of this step can be optimized. if we organize the simulated PAR at different times in a same liDAR, then we can read a same LiDAR data and select the right columes here
+LiDARdata=load(strcat(filepath,filename));  %å¯¼å…¥è¯¥æ—¶åˆ»è¾å°„æ•°æ®, speed of this step can be optimized. if we organize the simulated PAR at different times in a same liDAR, then we can read a same LiDAR data and select the right columes here
 
-%¼ÆËãAPAR
+%è®¡ç®—APAR
 PAR=LiDARdata(:,6);
-PAR_sun = LiDARdata(:,4); % ´Ë´¦µÄPARÊÇ×îÖÕÕıÈ·Öµ
+PAR_sun = LiDARdata(:,4); % æ­¤å¤„çš„PARæ˜¯æœ€ç»ˆæ­£ç¡®å€¼
 PAR_sky = LiDARdata(:,5);
 
 sifdistribution=zeros(length(PAR),10);
-sifdistribution(:,1:3)=LiDARdata(:,1:3);  %»ñÈ¡µãÔÆ×ø±ê
+sifdistribution(:,1:3)=LiDARdata(:,1:3);  %è·å–ç‚¹äº‘åæ ‡
 SIF_MS=zeros(length(PAR),1);
-%lambda=400:1:700;   %PAR²¨¶Î·¶Î§
+%lambda=400:1:700;   %PARæ³¢æ®µèŒƒå›´
 lambda=400:1:680; 
 
 for i=1:length(PAR)  
@@ -207,10 +206,10 @@ for i=1:length(PAR)
     
     Esunf_=leafsun.*abs(J_o);
     Epluf_=leafdiff.*abs(J_o);
-    Esunf_=(phot2e(lambda,Esunf_'))'; %umol/m2/nm×ªw/m2
-    Epluf_=(phot2e(lambda,Epluf_'))'; %umol/m2/nm×ªw/m2
+    Esunf_=(phot2e(lambda,Esunf_'))'; %umol/m2/nmè½¬w/m2
+    Epluf_=(phot2e(lambda,Epluf_'))'; %umol/m2/nmè½¬w/m2
 
-    MpluEsunI  = MpluI * Esunf_;  %MpluI Îª¹âÏµÍ³1µÄºóÏò·¢Éä¾ØÕó
+    MpluEsunI  = MpluI * Esunf_;  %MpluI ä¸ºå…‰ç³»ç»Ÿ1çš„åå‘å‘å°„çŸ©é˜µ
     MminEsunI  = MminI * Esunf_;
     MpluEsunII  = MpluII * Esunf_; 
     MminEsunII  = MminII * Esunf_;
@@ -220,8 +219,8 @@ for i=1:length(PAR)
     MpluEpluII  = MpluII * Epluf_;
     MminEpluII  = MminII * Epluf_;	
 	
-	sifdistribution(i,4)=(MpluEsunI(98)+MpluEsunII(98)+MpluEpluI(98)+MpluEpluII(98))/pi+ (MminEsunI(98)+MminEsunII(98)+MminEpluI(98)+MminEpluII(98))/pi;%98¶ÔÓ¦737nm SIF·¢Éä  %640-850; MpluEsunI(92)×î´ó£¬¶ÔÓ¦640+91=731nm
-    SIF_MS(i)=RT_ms(daytime)*(MpluEsunI(98)+MpluEsunII(98)+MminEsunI(98)+MminEsunII(98))/pi+RZT_ms(daytime)*(MpluEpluI(98)+MpluEpluII(98)+MminEpluI(98)+MminEpluII(98))/pi;  %SIF¶à´ÎÉ¢Éä
+	sifdistribution(i,4)=(MpluEsunI(98)+MpluEsunII(98)+MpluEpluI(98)+MpluEpluII(98))/pi+ (MminEsunI(98)+MminEsunII(98)+MminEpluI(98)+MminEpluII(98))/pi;%98å¯¹åº”737nm SIFå‘å°„  %640-850; MpluEsunI(92)æœ€å¤§ï¼Œå¯¹åº”640+91=731nm
+    SIF_MS(i)=RT_ms(daytime)*(MpluEsunI(98)+MpluEsunII(98)+MminEsunI(98)+MminEsunII(98))/pi+RZT_ms(daytime)*(MpluEpluI(98)+MpluEpluII(98)+MminEpluI(98)+MminEpluII(98))/pi;  %SIFå¤šæ¬¡æ•£å°„
     
     sifdistribution(i,4) = sifdistribution(i,4);             % leaf-level SIF induced by direct PAR and diffuse PAR
     sifdistribution(i,5) = SIF_MS(i);                        % multi-scattered SIF 
@@ -234,7 +233,7 @@ for i=1:length(PAR)
     sifdistribution(i,10)=sifdistribution(i,8)  + RZT_ms(daytime)*(MpluEpluI(98)+MpluEpluII(98)+MminEpluI(98)+MminEpluII(98))/pi;%760nm SIF shadeLeaf SIF  (include msSIF)
     
 end
-eval(['save ' filename_path '.txt sifdistribution -ASCII']) %±£´æSIFµãÔÆ
+eval(['save ' filename_path '.txt sifdistribution -ASCII']) %ä¿å­˜SIFç‚¹äº‘
 
 
 end
